@@ -30,7 +30,13 @@ makeblastdb -in ./human.fa -dbtype prot -parse_seqids -out ./index # 建立索�
 blastp -query ../sequence/Homo_sapiens.GRCh38.pep.all.fa -db ./index -evalue 1e-10 -outfmt 6 -num_threads 6 -out result.tsv
 
 # 统计
-
-
+cat result.tsv | cut -f 1 | sort | uniq | wc -l
+# 626
+cat result.tsv | cut -f 1 | sort | uniq > pretein_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f pretein_ID.lst | wc -l
+# 626
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f pretein_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 169
 ```
 

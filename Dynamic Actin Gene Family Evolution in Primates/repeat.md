@@ -89,6 +89,17 @@ cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein_ID.l
 # 41
 ```
 > 为了确保筛选出来的都是肌动蛋白基因，这里利用CDD对这些序列的Domain进行鉴定
-+ CDD
++ [CDD](https://www.ncbi.nlm.nih.gov/Structure/bwrpsb/bwrpsb.cgi)
+```bash
+cd blastp_six
+
+faops some ../sequence/Homo_sapiens.GRCh38.pep.all.fa protein_ID.lst raw.fa
+```
+![](./Fig/CDD.png)
+
+
+
+
+
 
 

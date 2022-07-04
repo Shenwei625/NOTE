@@ -96,7 +96,28 @@ cd blastp_six
 faops some ../sequence/Homo_sapiens.GRCh38.pep.all.fa protein_ID.lst raw.fa
 ```
 ![](./Fig/CDD.png)
+```bash
+mkdir CDD
+cd CDD
 
+mv hitdata.txt ./
+
+cat hitdata.txt | perl -ne'
+  if (/^Q/) {
+    print "$_";
+  }else {
+    next
+  }
+' > hitdata.tsv
+
+cat hitdata.tsv | grep -i "actin" | wc -l
+# 66
+
+cat hitdata.tsv | grep -i "actin" | cut -f 1 | cut -d ">" -f 2 > CDD_filter.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f CDD_filter.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 26
+```
 
 
 

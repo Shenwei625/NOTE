@@ -20,23 +20,75 @@ head -n 2 Homo_sapiens.GRCh38.pep.all.fa
 
 下载序列并重命名为human.fa
 ## 1.3 Identify actin genes
+> biomart根据PFAM结构域初步筛选了一部分序列，这里利用blastp进行进一步鉴定
 ```bash
 mkdir blastp
 cd blastp
 mv human.fa blastp
 
 # blastp
-makeblastdb -in ./human.fa -dbtype prot -parse_seqids -out ./index # 建立索引
-blastp -query ../sequence/Homo_sapiens.GRCh38.pep.all.fa -db ./index -evalue 1e-10 -outfmt 6 -num_threads 6 -out result.tsv
+makeblastdb -in ../sequence/Homo_sapiens.GRCh38.pep.all.fa -dbtype prot -parse_seqids -out ./index # 建立索引
+blastp -query ./human.fa -db ./index -evalue 1e-10 -qcov_hsp_perc 60 -outfmt 6 -num_threads 6 -out result.tsv
 
 # 统计
-cat result.tsv | cut -f 1 | sort | uniq | wc -l
-# 626
-cat result.tsv | cut -f 1 | sort | uniq > pretein_ID.lst
-cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f pretein_ID.lst | wc -l
-# 626
-cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f pretein_ID.lst | cut -d " " -f 4 | # 查询基因ID
+cat result.tsv | cut -f 2 | sort | uniq | wc -l
+# 108
+cat result.tsv | cut -f 2 | sort | uniq > protein_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein_ID.lst | wc -l
+# 108
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein_ID.lst | cut -d " " -f 4 | # 查询基因ID
   sort | uniq | wc -l
-# 169
+# 32
 ```
++ 第二轮blastp
+```bash
+cd repeat
+mkdir ../blastp_two
+cd ../blastp_two
+
+faops some ../sequence/Homo_sapiens.GRCh38.pep.all.fa ../blastp/protein_ID.lst seed.fa
+
+makeblastdb -in ../sequence/Homo_sapiens.GRCh38.pep.all.fa -dbtype prot -parse_seqids -out ./index
+blastp -query ./seed.fa -db ./index -evalue 1e-10 -qcov_hsp_perc 60 -outfmt 6 -num_threads 6 -out result.tsv
+
+# 统计
+cat result.tsv | cut -f 2 | sort | uniq | wc -l
+# 110
+cat result.tsv | cut -f 2 | sort | uniq > protein_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 33 
+```
++ 第三轮blastp
+```bash
+cd repeat
+mkdir ../blastp_three
+cd ../blastp_three
+
+faops some ../sequence/Homo_sapiens.GRCh38.pep.all.fa ../blastp_two/protein_ID.lst seed.fa
+
+makeblastdb -in ../sequence/Homo_sapiens.GRCh38.pep.all.fa -dbtype prot -parse_seqids -out ./index
+blastp -query ./seed.fa -db ./index -evalue 1e-10 -qcov_hsp_perc 60 -outfmt 6 -num_threads 6 -out result.tsv
+
+# 统计
+cat result.tsv | cut -f 2 | sort | uniq | wc -l 
+# 118
+cat result.tsv | cut -f 2 | sort | uniq > protein_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 38
+```
++ 重复blastp一直到没有新的结果
+```bash
+# 最终统计（6轮）
+cat result.tsv | cut -f 2 | sort | uniq | wc -l
+# 128
+cat result.tsv | cut -f 2 | sort | uniq > protein_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 41
+```
+> 为了确保筛选出来的都是肌动蛋白基因，这里利用CDD对这些序列的Domain进行鉴定
++ CDD
+
 

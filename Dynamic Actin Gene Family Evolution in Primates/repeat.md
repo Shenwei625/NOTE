@@ -20,7 +20,7 @@ head -n 2 Homo_sapiens.GRCh38.pep.all.fa
 
 下载序列并重命名为human.fa
 ## 1.3 Identify actin genes
-> biomart根据PFAM结构域初步筛选了一部分序列，这里利用blastp查找是否有可能的同源物（potential homologs）?
+> biomart根据PFAM结构域初步筛选了一部分序列，这里利用blastp查找潜在的同源物（potential homologs）?
 ```bash
 mkdir blastp
 cd blastp
@@ -120,7 +120,24 @@ cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f CDD_filter.l
 ```
 
 ## Sequence Alignment and Phylogenetic Analysis
++ 以biomart下载的结果尝试
+```bash
+mkdir Biomart
+cd Biomart
 
+JOB=$(ls *.fa)
+for i in $JOB;do
+  cat $i >> raw.fa
+done
+
+# 筛选出大于160aa的片段
+faops size raw.fa | wc -l 
+# 431
+faops size raw.fa | tsv-filter --ge 2:160 | wc -l
+# 382
+faops size raw.fa | tsv-filter --ge 2:160 | cut -f 1 > 160.lst
+faops some raw.fa 160.lst 160.fa
+```
 
 
 

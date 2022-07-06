@@ -119,6 +119,35 @@ cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f CDD_filter.l
 # 26
 ```
 
++ 根据PFAM提供的种子序列进行blastp检索
+
+![](./Fig/PFAM_seed.png)
+
+下载种子序列文件PF00022_seed.txt
+
+```bash
+mkdir new_blastp
+cd new_blastp
+
+mv PF00022_seed.txt ./
+mv PF00022_seed.txt PF00022_seed.fa
+
+makeblastdb -in ../sequence/Homo_sapiens.GRCh38.pep.all.fa -dbtype prot -parse_seqids -out ./index
+blastp -query ./PF00022_seed.fa -db ./index -evalue 1e-10 -outfmt 6 -num_threads 6 -out result.tsv
+
+# 统计
+cat result.tsv | cut -f 2 | sort | uniq | wc -l
+# 100蛋白
+cat result.tsv | cut -f 2 | sort | uniq > protein_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 30基因
+```
+经过鉴定这30基因属于肌动蛋白家族和POTE ankyrin domain family（POTE*）成员，但是在同样的条件下（1e-10）进行第二轮blastp之后便产生了许多额外的蛋白
+
+
+
+
 ## Sequence Alignment and Phylogenetic Analysis
 + 以biomart下载的结果尝试
 ```bash

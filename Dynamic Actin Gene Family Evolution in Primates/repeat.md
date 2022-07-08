@@ -133,20 +133,85 @@ mv PF00022_seed.txt ./
 mv PF00022_seed.txt PF00022_seed.fa
 
 makeblastdb -in ../sequence/Homo_sapiens.GRCh38.pep.all.fa -dbtype prot -parse_seqids -out ./index
-blastp -query ./PF00022_seed.fa -db ./index -evalue 1e-10 -outfmt 6 -num_threads 6 -out result.tsv
+blastp -query ./PF00022_seed.fa -db ./index -evalue 1e-10 -qcov_hsp_perc 60 -outfmt 6 -num_threads 6 -out result.tsv
 
 # 统计
 cat result.tsv | cut -f 2 | sort | uniq | wc -l
-# 100蛋白
+# 69蛋白
 cat result.tsv | cut -f 2 | sort | uniq > protein_ID.lst
 cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein_ID.lst | cut -d " " -f 4 | # 查询基因ID
   sort | uniq | wc -l
-# 30基因
+# 28基因
 ```
-经过鉴定这30基因属于肌动蛋白家族和POTE ankyrin domain family（POTE*）成员，但是在同样的条件下（1e-10）进行第二轮blastp之后便产生了许多额外的蛋白
+第二轮
+```bash
+faops some ../sequence/Homo_sapiens.GRCh38.pep.all.fa protein_ID.lst seed2.fa
 
+blastp -query ./seed2.fa -db ./index -evalue 1e-10 -qcov_hsp_perc 60 -outfmt 6 -num_threads 6 -out result2.tsv
 
+cat result2.tsv | cut -f 2 | sort | uniq | wc -l
+# 77
+cat result2.tsv | cut -f 2 | sort | uniq > protein2_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein2_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 32
+```
+第三轮
+```bash
+faops some ../sequence/Homo_sapiens.GRCh38.pep.all.fa protein2_ID.lst seed3.fa
 
+blastp -query ./seed3.fa -db ./index -evalue 1e-10 -qcov_hsp_perc 60 -outfmt 6 -num_threads 6 -out result3.tsv
+
+# 统计
+cat result3.tsv | cut -f 2 | sort | uniq | wc -l
+# 86
+cat result3.tsv | cut -f 2 | sort | uniq > protein3_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein3_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 33
+```
+第四轮
+```bash
+faops some ../sequence/Homo_sapiens.GRCh38.pep.all.fa protein3_ID.lst seed4.fa
+
+blastp -query ./seed4.fa -db ./index -evalue 1e-10 -qcov_hsp_perc 60 -outfmt 6 -num_threads 6 -out result4.tsv
+
+# 统计
+cat result4.tsv | cut -f 2 | sort | uniq | wc -l
+# 106
+cat result4.tsv | cut -f 2 | sort | uniq > protein4_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein4_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 38
+```
+第五轮
+```bash
+faops some ../sequence/Homo_sapiens.GRCh38.pep.all.fa protein4_ID.lst seed5.fa
+
+blastp -query ./seed5.fa -db ./index -evalue 1e-10 -qcov_hsp_perc 60 -outfmt 6 -num_threads 6 -out result5.tsv
+
+# 统计
+cat result5.tsv | cut -f 2 | sort | uniq | wc -l
+# 114
+cat result5.tsv | cut -f 2 | sort | uniq > protein5_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein5_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 40
+```
+第六轮
+```bash
+faops some ../sequence/Homo_sapiens.GRCh38.pep.all.fa protein5_ID.lst seed6.fa
+
+blastp -query ./seed6.fa -db ./index -evalue 1e-10 -qcov_hsp_perc 60 -outfmt 6 -num_threads 6 -out result6.tsv
+
+# 统计
+cat result6.tsv | cut -f 2 | sort | uniq | wc -l
+# 117
+cat result6.tsv | cut -f 2 | sort | uniq > protein6_ID.lst
+cat ../sequence/Homo_sapiens.GRCh38.pep.all.fa | grep ">" | grep -f protein6_ID.lst | cut -d " " -f 4 | # 查询基因ID
+  sort | uniq | wc -l
+# 41
+```
 
 ## Sequence Alignment and Phylogenetic Analysis
 + 以biomart下载的结果尝试

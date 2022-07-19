@@ -61,12 +61,44 @@ done
 ```
 
 ## 计算
++ 对数据进行预处理（删除终止密码子和ATG、TGG）
+```bash
+cd result
 
+JOB=$(find ./ -maxdepth 2 -type f -name "*.tsv")
+for J in $JOB;do
+  echo -e "====> $J"
+  tsv-filter -H --str-ne Codon:UAA $J | 
+  tsv-filter -H --str-ne Codon:UAG | 
+  tsv-filter -H --str-ne Codon:UGA |
+  tsv-filter -H --str-ne Codon:AUG |
+  tsv-filter -H --str-ne Codon:UGG > tem&&
+  mv tem $J
+done
+```
++ 合并(以group组为例)
+```bash
+cd group
 
+JOB=$(ls)
+tsv-select -H --fields Codon c1.tsv > merge.tsv
+for J in $JOB;do
+  echo -e "===> $J"
+  tsv-join --filter-file $J -H --key-fields Codon --append-fields RSCU merge.tsv > tem
+    mv tem merge.tsv
+done
+```
++ 计算方差
+```bash
+# 利用datamash中的svar计算(brew install datamash)
+datamash --help
 
+# 查看矩阵
+head merge.tsv
 
-
-
-
-
-
+# 计算
+cat merge.tsv | datamash transpose | datamash --header-in --header-out svar 2-60 | datamash transpose > svar.tsv
+# transpose 转置
+# --header-in           first input line is column headers
+# --header-out          print column headers as first line
+```

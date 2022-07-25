@@ -57,7 +57,7 @@ B：基因型、甲基化、基因、表型（环境）以及通路之间的关�
 
 AT5G63120 (RNA HELICASE 30, RH30)和AT5G10140 (FLOWERING LOCUS C, FLC)与开花时间有关（先前实验证明），而ATMG01380 (RIBOSOMAL RNA5S, RRN5)和AT1G01046 (MIR838A) 分别与叶片中Mo98和K39的含量有关（新发现）
 
-
+横坐标越靠近0，表型状态越明显
 
 
 

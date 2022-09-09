@@ -15,6 +15,13 @@ siRNA（small interfering RNAs）介导的 DNA 甲基化是植物表观遗传的
 
 
 ## 3 结论
+### 3.1 图 1（种群的 SMPs 分析）
+![](./Fig/1.jpg)
 
+单甲基化多态性（single methylation polymorphisms，SMPs）
+
+a：为了确定 SMP 多样性的模式，计算了1号染色体不同位置的甲基化状态的保守性（Conservation score）。可以观察到 mCHH 在染色体不同区域的保守型没有太多差别，在1号染色体上 15Mb 左右的位置上，甲基化的保守性较高（着丝粒？），mCG 上的保守性相对于另外两种序列上的保守型高。
+
+b-d：SMP 保守性在各个基因组注释区域的分布。
 
 
